@@ -44,7 +44,7 @@ module.exports.showListing = async (req, res) => {
         return res.redirect("/listings");
     }
 
-    return res.render("listings/show", { listing });
+    return res.render("listings/show", { listing ,mapToken : process.env.MAP_TOKEN });
 };
 
 // Create Route
