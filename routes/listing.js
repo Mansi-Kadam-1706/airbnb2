@@ -23,6 +23,7 @@ const validateListing = (req,res,next)=>{
 
 
 // Index
+
 router.get("/", wrapAsync(listingController.index));
 
 // New

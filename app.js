@@ -26,14 +26,17 @@ const dbUrl = process.env.ATLASDB_URL;
 console.log("DB URL:", dbUrl);
 
 // ================= DB CONNECT + SERVER START =================
+
 async function main() {
     await mongoose.connect(dbUrl);
     console.log("Connected to DB");
 
+
+
     // ✅ SESSION STORE (AFTER DB CONNECT)
     const store = MongoStore.create({
     mongoUrl: dbUrl,
-    tt1:24*60*60
+    ttl: 24 * 60 * 60
 });
 
     store.on("error", (err) => {
@@ -83,14 +86,22 @@ async function main() {
     });
 
     
-
+    
+     
     // ================= ROUTES =================
+    app.get("/", (req, res) => {
+      console.log("LISTINGS ROUTE HIT");  
+    return res.redirect("/listings");
+});
     app.use("/listings", listings);
     app.use("/listings/:id/reviews", reviews);
     app.use("/", userRouter);
 
+     
+
     // ================= 404 =================
     app.all("*", (req, res, next) => {
+        
         next(new ExpressError(404, "Page Not Found!"));
     });
 
@@ -104,9 +115,11 @@ async function main() {
     });
 
     // ================= SERVER =================
-    app.listen(8080, () => {
-        console.log("Server is listening on port 8080");
-    });
+    const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log("Server is listening on port", PORT);
+});
 }
 
 main().catch(err => console.log(err));
