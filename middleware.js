@@ -1,5 +1,7 @@
 const Listing = require("./models/listing.js");
 const Review = require("./models/review.js");
+const rateLimit = require("express-rate-limit");
+
 
 module.exports.isLoggedIn =(req,res,next)=>{
     if(!req.isAuthenticated()){
@@ -53,3 +55,9 @@ module.exports.isReviewAuthor=async(req,res,next)=>{
     }
     next();
 }
+
+module.exports.loginLimiter = rateLimit({
+    windowMs:1*60*1000,
+    limit:3,
+    message:"To many login attemepts,try again later"
+});
