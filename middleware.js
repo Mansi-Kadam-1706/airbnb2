@@ -57,7 +57,8 @@ module.exports.isReviewAuthor=async(req,res,next)=>{
 }
 
 module.exports.loginLimiter = rateLimit({
-    windowMs:1*60*1000,
-    limit:3,
-    message:"To many login attemepts,try again later"
-});
+     windowMs: 1 * 60 * 1000, 
+     limit: 3, handler: (req, res) => { 
+        req.flash("error", "Too many login attempts, try again later");
+         return res.redirect("/login"); 
+        } });
