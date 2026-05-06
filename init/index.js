@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: "../.env" });
 const mongoose = require('mongoose'); 
 const data = require('./data.js');
 const Listing = require('../models/listing.js');
@@ -7,8 +7,11 @@ const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
-const MONGO_URL = "mongodb://localhost:27017/wanderlust";
+function formatCategory(category) {
+    return category.toLowerCase().replace(/\s+/g, "_");
+}
 
+const MONGO_URL = process.env.ATLASDB_URL;
 main()
     .then(() => {
         console.log("connected to db");
@@ -38,6 +41,7 @@ const initDB = async () => {
 
             await Listing.create({
                 ...obj,
+                category: formatCategory(obj.category), 
                 owner: "69f0cca9b226403879d2abd9",
                 geometry: geometry
             })
