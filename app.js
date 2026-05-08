@@ -101,6 +101,14 @@ async function main() {
     app.use("/", userRouter);
     app.use("/listings", bookingRoutes);
 
+    app.get("/privacy", (req, res) => {
+    res.render("privacy");
+});
+
+app.get("/terms", (req, res) => {
+    res.render("terms");
+});
+
      
 
     // ================= 404 =================
