@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const data = require('./data.js');
 const Listing = require('../models/listing.js');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const User = require("../models/user");
+
 
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
@@ -26,6 +28,7 @@ async function main() {
 
 const initDB = async () => {
     await Listing.deleteMany({});
+     const user = await User.findOne();
 
     for(let obj of data.data){
         try{
@@ -38,11 +41,12 @@ const initDB = async () => {
             if (response.body.features.length > 0) {
                 geometry = response.body.features[0].geometry;
             }
+           
 
             await Listing.create({
                 ...obj,
                 category: formatCategory(obj.category), 
-                owner: "69f0cca9b226403879d2abd9",
+                owner: user._id,
                 geometry: geometry
             })
 

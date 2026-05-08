@@ -3,6 +3,13 @@ const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 const ExpressError = require("../utils/ExpressError.js");
+const cloudinary = require("../cloudConfig"); 
+const Booking = require("../models/booking");
+
+
+const geocoder = mbxGeocoding({
+    accessToken: process.env.MAP_TOKEN
+});
 
 // Index Route
 module.exports.index = async (req, res) => {
@@ -19,6 +26,12 @@ module.exports.index = async (req, res) => {
    }
 
    const allListings = await Listing.find(filter);
+
+   for(let listing of allListings){
+    const booking = await Booking.findOne({listing: listing._id,user:{$ne: req.user?._id}});
+
+    listing.isBooked = booking ? true:false;
+   }
 
    res.render("listings/index", { allListings });
 };
@@ -105,8 +118,17 @@ module.exports.updateListing = async (req, res) => {
         throw new ExpressError(400,"send valid data for listing");
     }
     let { id } = req.params;
-     let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing },{new:true});
-   
+      
+      let updatedData = {...req.body.listing};
+        let response = await geocoder.forwardGeocode({
+        query: updatedData.location,
+        limit: 1
+    }).send();
+     if (response.body.features.length > 0) {
+        updatedData.geometry = response.body.features[0].geometry;
+    }
+
+    let listing = await Listing.findByIdAndUpdate(id,updatedData,{new:true});
 
      if(typeof req.file !== "undefined"){
         let url = req.file.path;
@@ -122,6 +144,12 @@ module.exports.updateListing = async (req, res) => {
 // Delete Route
 module.exports.deleteListing = async (req, res) => {
     let { id } = req.params;
+
+    const listing = await Listing.findById(id);
+
+    if(listing.image && listing.image.filename){
+        await cloudinary.uploader.destroy(listing.image.filename);
+    }
 
     await Listing.findByIdAndDelete(id);
 
