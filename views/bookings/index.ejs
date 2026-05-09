@@ -1,0 +1,59 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-4">
+
+    <h2>My Bookings</h2>
+
+    <% if(bookings.length === 0) { %>
+
+        <p>No bookings yet.</p>
+
+    <% } %>
+
+    <div class="row">
+
+        <% bookings.forEach(booking => { %>
+
+            <div class="card col-4 m-2">
+
+                <img 
+                    src="<%= booking.listing.image.url %>"
+                    class="card-img-top"
+                    style="height:200px; object-fit:cover;"
+                >
+
+                <div class="card-body">
+
+                    <h5>
+                        <%= booking.listing.title %>
+                    </h5>
+
+                    <p>
+                        Check-in:
+                        <%= booking.checkIn.toDateString() %>
+                    </p>
+
+                    <p>
+                        Check-out:
+                        <%= booking.checkOut.toDateString() %>
+                    </p>
+                    
+                     <% if(currUser && currUser._id.equals(booking.user._id)) {%>
+                         <form 
+                      method="POST"
+                      action="/bookings/<%= booking._id %>?_method=DELETE"
+                    >
+                        <button class="btn btn-danger">
+                            Cancel Booking
+                        </button>
+                    </form>
+                    <% } %>
+                   
+                </div>
+            </div>
+
+        <% }) %>
+
+    </div>
+
+</div>

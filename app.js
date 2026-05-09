@@ -26,7 +26,6 @@ const bookingRoutes = require("./routes/booking");
 const dbUrl = process.env.ATLASDB_URL;
 console.log("DB URL:", dbUrl);
 
-// ================= DB CONNECT + SERVER START =================
 
 async function main() {
     await mongoose.connect(dbUrl);
@@ -34,7 +33,7 @@ async function main() {
 
 
 
-    // ✅ SESSION STORE (AFTER DB CONNECT)
+    
     const store = MongoStore.create({
     mongoUrl: dbUrl,
     ttl: 24 * 60 * 60
@@ -44,12 +43,12 @@ async function main() {
         console.log("SESSION STORE ERROR:", err);
     });
 
-    // ================= VIEW ENGINE =================
+    
     app.set("view engine", "ejs");
     app.set("views", path.join(__dirname, "views"));
     app.engine("ejs", engine);
 
-    // ================= MIDDLEWARE =================
+    
     app.use(express.urlencoded({ extended: true }));
     app.use(methodOverride("_method"));
     app.use(express.static(path.join(__dirname, "public")));
@@ -57,7 +56,7 @@ async function main() {
     
     
 
-    // ================= SESSION =================
+    
     app.use(session({
         store,
         secret: process.env.SECRET,
@@ -72,7 +71,7 @@ async function main() {
 
     app.use(flash());
 
-    // ================= PASSPORT =================
+
     app.use(passport.initialize());
     app.use(passport.session());
 
@@ -80,7 +79,7 @@ async function main() {
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
 
-    // ================= GLOBAL LOCALS =================
+    
     app.use((req, res, next) => {
         res.locals.success = req.flash("success");
         res.locals.error = req.flash("error");
@@ -91,7 +90,7 @@ async function main() {
     
     
      
-    // ================= ROUTES =================
+    
     app.get("/", (req, res) => {
       console.log("LISTINGS ROUTE HIT");  
     return res.redirect("/listings");
@@ -99,7 +98,7 @@ async function main() {
     app.use("/listings", listings);
     app.use("/listings/:id/reviews", reviews);
     app.use("/", userRouter);
-    app.use("/listings", bookingRoutes);
+    app.use("/bookings", bookingRoutes);
 
     app.get("/privacy", (req, res) => {
     res.render("privacy");
@@ -111,13 +110,13 @@ app.get("/terms", (req, res) => {
 
      
 
-    // ================= 404 =================
+   
     app.all("*", (req, res, next) => {
         
         next(new ExpressError(404, "Page Not Found!"));
     });
 
-    // ================= ERROR HANDLER =================
+    
     app.use((err, req, res, next) => {
         if (res.headersSent) {
             return next(err);
@@ -126,7 +125,7 @@ app.get("/terms", (req, res) => {
         return res.status(statusCode).render("err.ejs", { message });
     });
 
-    // ================= SERVER =================
+   
     const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {

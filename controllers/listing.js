@@ -13,7 +13,7 @@ const geocoder = mbxGeocoding({
 
 // Index Route
 module.exports.index = async (req, res) => {
-   const { category, q } = req.query;
+   const { category, q ,page=1} = req.query;
 
    let filter = {};
 
@@ -25,15 +25,22 @@ module.exports.index = async (req, res) => {
       filter.title = { $regex: q, $options: "i" };
    }
 
-   const allListings = await Listing.find(filter);
+   const limit=9;
+   const skip=(page-1)*limit;
+   
+   const totalListings = await Listing.countDocuments(filter);
+   const totalPages = Math.ceil(totalListings / limit);
+
+   const allListings = await Listing.find(filter).skip(skip).limit(limit);
 
    for(let listing of allListings){
     const booking = await Booking.findOne({listing: listing._id,user:{$ne: req.user?._id}});
 
     listing.isBooked = booking ? true:false;
+     listing.booking = booking; 
    }
 
-   res.render("listings/index", { allListings });
+   res.render("listings/index", { allListings ,currentPage:Number(page),totalPages});
 };
 
 // New Form

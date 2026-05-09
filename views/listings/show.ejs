@@ -53,7 +53,7 @@
         <h4>Book this place</h4>
 
         <% if (currUser) { %>
-          <form action="/listings/<%= listing._id %>/book" method="POST">
+          <form action="/bookings/<%= listing._id %>/book" method="POST">
 
             <div class="mb-3">
               <label class="form-label">Check-in</label>

@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate') -%>
 
 <body>
-    <%= success %>
+    
     <style>
         #filters{
             display:flex;
@@ -129,8 +129,13 @@ a.filter:hover {
                            
                             <i class="tax-info" > &nbsp; &nbsp; +18% GST</i>
                              <% if(listing.isBooked) { %>
-                                
                                      <p class="text-danger fw-bold">Already Booked</p>
+                                     <small class="text-muted">
+      <%= listing.booking.checkIn.toDateString() %>
+      →
+      <%= listing.booking.checkOut.toDateString() %>
+
+   </small>
                                     
                                
                             <% } %>
@@ -145,6 +150,35 @@ a.filter:hover {
         <% } %>
 
     </div>
+    <div class="d-flex justify-content-center mt-4">
+
+  <% if(currentPage > 1) { %>
+
+    <a
+      href="/listings?page=<%= currentPage - 1 %>"
+      class="btn  me-2"
+    >
+      ←
+    </a>
+
+  <% } %>
+
+  <span class="mt-2">
+    Page <%= currentPage %> of <%= totalPages %>
+  </span>
+
+  <% if(currentPage < totalPages) { %>
+
+    <a
+      href="/listings?page=<%= currentPage + 1 %>"
+      class="btn  ms-2"
+    >
+      →
+    </a>
+
+  <% } %>
+
+</div>
 </body>
 
 <script>
