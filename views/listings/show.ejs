@@ -50,44 +50,51 @@
 
       <!-- BOOKING FORM -->
       <div class="mt-4">
-        <h4>Book this place</h4>
 
-        <% if (currUser) { %>
-          <form action="/bookings/<%= listing._id %>/book" method="POST">
+  <% if (currUser && currUser.role === "customer") { %>
 
-            <div class="mb-3">
-              <label class="form-label">Check-in</label>
-              <input 
-                type="date" 
-                name="checkIn" 
-                class="form-control" 
-                required 
-                min="<%= new Date().toISOString().split('T')[0] %>"
-              >
-            </div>
+    <h4>Book this place</h4>
 
-            <div class="mb-3">
-              <label class="form-label">Check-out</label>
-              <input 
-                type="date" 
-                name="checkOut" 
-                class="form-control" 
-                required
-              >
-            </div>
+    <form action="/bookings/<%= listing._id %>/book" method="POST">
 
-            <button class="btn btn-success">Book Now</button>
-          </form>
-
-        <% } else { %>
-          <p>Please <a href="/login">login</a> to book this place.</p>
-        <% } %>
+      <div class="mb-3">
+        <label class="form-label">Check-in</label>
+        <input
+          type="date"
+          name="checkIn"
+          class="form-control"
+          required
+          min="<%= new Date().toISOString().split('T')[0] %>"
+        >
       </div>
+
+      <div class="mb-3">
+        <label class="form-label">Check-out</label>
+        <input
+          type="date"
+          name="checkOut"
+          class="form-control"
+          required
+        >
+      </div>
+
+      <button class="btn btn-success">Book Now</button>
+
+    </form>
+
+  <% } else if (!currUser) { %>
+
+    <h4>Book this place</h4>
+    <p>Please <a href="/login">login</a> to book this place.</p>
+
+  <% } %>
+
+</div>
 
       <!-- REVIEW SECTION -->
       <div class="mt-4">
 
-        <% if (currUser) { %>
+        <% if (currUser  && currUser.role === "customer") { %>
           <hr>
           <h4>Leave a Review</h4>
 

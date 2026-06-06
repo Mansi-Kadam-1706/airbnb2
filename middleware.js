@@ -3,6 +3,7 @@ const Review = require("./models/review.js");
 const rateLimit = require("express-rate-limit");
 
 
+
 module.exports.isLoggedIn =(req,res,next)=>{
     if(!req.isAuthenticated()){
         req.session.redirectUrl = req.originalUrl; //Stores the page user was trying to visit
@@ -62,3 +63,18 @@ module.exports.loginLimiter = rateLimit({
         req.flash("error", "Too many login attempts, try again later");
          return res.redirect("/login"); 
         } });
+module.exports.isAdmin=(req,res,next)=>{
+     if (!req.user || req.user.role !== "admin") {
+        req.flash("error", "Only admin can perform this action!");
+        return res.redirect("/listings");
+     }
+      next();
+}
+
+module.exports.isCustomer = (req, res, next) => {
+    if (!req.user || req.user.role !== "customer") {
+        req.flash("error", "Only customers can book listings.");
+        return res.redirect("/listings");
+    }
+    next();
+};

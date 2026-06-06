@@ -3,7 +3,7 @@ const router = express.Router();
 const wrapAsync= require("../utils/wrapAsync.js");
 const { listingSchema, reviewSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
-const {isLoggedIn,isOwner,isReviewAuthor} = require("../middleware");
+const {isLoggedIn,isOwner,isReviewAuthor,isAdmin} = require("../middleware");
 const {saveRedirectUrl} = require("../middleware");
 const listingController = require("../controllers/listing.js");
 const multer  = require('multer')
@@ -27,7 +27,7 @@ const validateListing = (req,res,next)=>{
 router.get("/", wrapAsync(listingController.index));
 
 // New
-router.get("/new", isLoggedIn, listingController.renderNewForm);
+router.get("/new", isLoggedIn,isAdmin, listingController.renderNewForm);
 
 
 
@@ -38,13 +38,13 @@ router.get("/:id", wrapAsync(listingController.showListing));
 router.post("/", isLoggedIn, upload.single("listing[image]"),validateListing, wrapAsync(listingController.createListing));
 
 // Edit
-router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm));
+router.get("/:id/edit", isLoggedIn,isAdmin, isOwner, wrapAsync(listingController.renderEditForm));
 
 // Update
-router.put("/:id", isLoggedIn, isOwner, upload.single("listing[image]"),validateListing, wrapAsync(listingController.updateListing));
+router.put("/:id", isLoggedIn,isAdmin, isOwner, upload.single("listing[image]"),validateListing, wrapAsync(listingController.updateListing));
 
 // Delete
-router.delete("/:id", isLoggedIn, isOwner, wrapAsync(listingController.deleteListing));
+router.delete("/:id", isLoggedIn,isAdmin, isOwner, wrapAsync(listingController.deleteListing));
 
 
 

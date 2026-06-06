@@ -128,7 +128,10 @@ a.filter:hover {
                             &#8377; <%= Number(listing.price).toLocaleString("en-IN") %> /night
                            
                             <i class="tax-info" > &nbsp; &nbsp; +18% GST</i>
-                             <% if(listing.isBooked) { %>
+                             <% if(listing.isBooked &&
+                                   listing.booking &&
+                                   new Date(listing.booking.checkOut) >= new Date()
+                             ) { %>
                                      <p class="text-danger fw-bold">Already Booked</p>
                                      <small class="text-muted">
       <%= listing.booking.checkIn.toDateString() %>

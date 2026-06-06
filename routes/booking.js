@@ -4,7 +4,7 @@ const router = express.Router();
 
 const wrapAsync = require("../utils/wrapAsync");
 
-const { isLoggedIn } = require("../middleware");
+const { isLoggedIn , isCustomer } = require("../middleware");
 
 const bookingController = require("../controllers/booking");
 
@@ -17,6 +17,7 @@ router.get(
 router.post(
     "/:id/book",
     isLoggedIn,
+    isCustomer,
     wrapAsync(bookingController.createBooking)
 );
 

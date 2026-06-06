@@ -8,14 +8,14 @@ module.exports.renderSignupForm = (req, res) => {
 // Signup
 module.exports.signup = async (req, res, next) => {
     try {
-        let { username, email, password } = req.body;
+        let { username, email, password ,role} = req.body;
 
-         if (!username || !email || !password) {
+         if (!username || !email || !password ) {
             req.flash("error", "All fields are required");
             return res.redirect("/signup");
         }
 
-        const newUser = new User({ email, username });
+        const newUser = new User({ email, username ,role});
         const registeredUser = await User.register(newUser, password);
 
         req.login(registeredUser, (err) => {
