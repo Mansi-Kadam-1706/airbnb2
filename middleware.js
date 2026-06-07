@@ -57,12 +57,20 @@ module.exports.isReviewAuthor=async(req,res,next)=>{
     next();
 }
 
+const rateLimit = require("express-rate-limit");
+
 module.exports.loginLimiter = rateLimit({
-     windowMs: 1 * 60 * 1000, 
-     limit: 3, handler: (req, res) => { 
+    windowMs: 1 * 60 * 1000,
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res) => {
         req.flash("error", "Too many login attempts, try again later");
-         return res.redirect("/login"); 
-        } });
+        return res.redirect("/login");
+    }
+});
+
+
 module.exports.isAdmin=(req,res,next)=>{
      if (!req.user || req.user.role !== "admin") {
         req.flash("error", "Only admin can perform this action!");
