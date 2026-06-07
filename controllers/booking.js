@@ -61,18 +61,22 @@ module.exports.createBooking = async (req, res) => {
 };
 
 module.exports.deleteBooking = async (req, res) => {
-
     const { bookingId } = req.params;
 
-    await Booking.findByIdAndDelete(bookingId);
-     if (!booking.user.equals(req.user._id)) {
+    const booking = await Booking.findById(bookingId);
 
-        req.flash("error", "You are not allowed!");
-
+    if (!booking) {
+        req.flash("error", "Booking not found");
         return res.redirect("/bookings/my");
     }
 
-    req.flash("success", "Booking cancelled");
+    if (!booking.user.equals(req.user._id)) {
+        req.flash("error", "You are not allowed!");
+        return res.redirect("/bookings/my");
+    }
 
+    await Booking.findByIdAndDelete(bookingId);
+
+    req.flash("success", "Booking cancelled");
     res.redirect("/bookings/my");
 };
