@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bookingSchema = new mongoose.Schema({
     listing: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "listing"
+        ref: "Listing"
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -11,8 +11,6 @@ const bookingSchema = new mongoose.Schema({
     },
     checkIn: Date,
     checkOut: Date,
-     totalPrice: Number
-
     
 });
 
